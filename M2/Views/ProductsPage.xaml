@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:M2.ViewModels"
+    x:Class="M2.Views.ProductsPage">
+
+    <ContentPage.BindingContext>
+        <viewModels:ProductsViewModel/>
+    </ContentPage.BindingContext>
+
+    <ScrollView>
+        <VerticalStackLayout 
+            Spacing="10">
+
+            <Grid Padding="5">
+
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Label
+                    Text="Список товаров"
+                    FontSize="24"
+                    FontAttributes="Bold"
+                    VerticalOptions="Center"/>
+
+                <Label
+                    Grid.Column="1"
+                    Text="{Binding UserName}"
+                    VerticalOptions="Center"
+                    Margin="0,0,15,0"/>
+
+                <Button
+                    Grid.Column="2"
+                    Margin="5"
+                    Text="Сортировка по количеству"
+                    TextColor="Black"
+                    BackgroundColor="#00FA9A"
+                    FontAttributes="Bold"
+                    IsVisible="{Binding CanSort}"
+                    Clicked="SortClicked"/>
+
+                <Button
+                    Grid.Column="3"
+                    Margin="5"
+                    Text="Выход"
+                    TextColor="BLACK"
+                    FontAttributes="Bold"
+                    BackgroundColor="#00FA9A"
+                    Clicked="ExitClicked"/>
+            </Grid>
+
+            <CollectionView ItemsSource="{Binding Products}">
+
+            <CollectionView.ItemTemplate>
+
+                <DataTemplate>
+
+                    <Border
+                        Margin="5"
+                        Padding="10"
+                        Stroke="Black"
+                        StrokeThickness="1">
+
+                        <Border.Triggers>
+
+                            <DataTrigger
+                                TargetType="Border"
+                                Binding="{Binding IsHighDiscount}"
+                                Value="True">
+
+                                <Setter
+                                    Property="BackgroundColor"
+                                    Value="#2E8B57"/>
+
+                            </DataTrigger>
+
+                            <DataTrigger
+                                TargetType="Border"
+                                Binding="{Binding IsOutOfStock}"
+                                Value="True">
+
+                                <Setter
+                                    Property="BackgroundColor"
+                                    Value="LightBlue"/>
+
+                            </DataTrigger>
+
+                        </Border.Triggers>
+
+                        <Grid
+                            ColumnDefinitions="170,*,140"
+                            ColumnSpacing="10">
+
+                            <!-- Фото -->
+
+                            <Border
+                                Grid.Column="0"
+                                Stroke="Black"
+                                StrokeThickness="1"
+                                HeightRequest="140"
+                                WidthRequest="160">
+
+                                <Image
+                                    Source="{Binding DisplayPhoto, TargetNullValue='picture.jpg'}"
+                                    HeightRequest="120"
+                                    WidthRequest="120"
+                                    Aspect="AspectFit"/>
+
+                            </Border>
+
+                            <!-- Информация -->
+
+                            <VerticalStackLayout
+                                Grid.Column="1"
+                                Spacing="3">
+
+                                <Label
+                                    FontSize="16"
+                                    FontAttributes="Bold">
+
+                                    <Label.FormattedText>
+
+                                        <FormattedString>
+
+                                            <Span Text="{Binding Category}" />
+                                            <Span Text=" | " />
+                                            <Span Text="{Binding ProductName}" />
+
+                                        </FormattedString>
+
+                                    </Label.FormattedText>
+
+                                </Label>
+
+                                <Label
+                                    Text="{Binding Description,
+                                    StringFormat='Описание: {0}'}"/>
+
+                                <Label
+                                    Text="{Binding Manufacturer,
+                                    StringFormat='Производитель: {0}'}"/>
+
+                                <Label
+                                    Text="{Binding Supplier,
+                                    StringFormat='Поставщик: {0}'}"/>
+
+                                <Label
+                                    Text="{Binding Measurement,
+                                    StringFormat='Ед. изм.: {0}'}"/>
+
+                                <Label
+                                    Text="{Binding Count,
+                                    StringFormat='Количество: {0}'}"/>
+
+                                <HorizontalStackLayout>
+
+                                    <Label Text="Цена:"/>
+
+                                    <Label
+                                        Text="{Binding Amount,
+                                        StringFormat=' {0:N2} ₽'}">
+
+                                        <Label.Triggers>
+
+                                            <DataTrigger
+                                                TargetType="Label"
+                                                Binding="{Binding HasDiscount}"
+                                                Value="True">
+
+                                                <Setter
+                                                    Property="TextDecorations"
+                                                    Value="Strikethrough"/>
+                                                    <Setter
+                                                        Property="TextColor"
+                                                        Value="red"/>
+
+                                                </DataTrigger>
+
+                                        </Label.Triggers>
+
+                                    </Label>
+
+                                    <Label
+                                        FontAttributes="Bold"
+                                        Text="{Binding FinalPrice,
+                                        StringFormat=' {0:N2} ₽'}"
+                                        IsVisible="{Binding HasDiscount}"/>
+
+                                </HorizontalStackLayout>
+
+                                <Label
+                                    Text="{Binding Article,
+                                    StringFormat='Артикул: {0}'}"/>
+
+                            </VerticalStackLayout>
+
+                            <!-- Скидка -->
+
+                            <Border
+                                Grid.Column="2">
+
+                                <Label
+                                    Text="{Binding Discount,
+                                    StringFormat='Действующая скидка {0}%'}"
+                                    HorizontalTextAlignment="Center"
+                                    VerticalTextAlignment="Center"
+                                    FontAttributes="Bold"/>
+
+                            </Border>
+
+                        </Grid>
+
+                    </Border>
+
+                </DataTemplate>
+
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </VerticalStackLayout>
+
+    </ScrollView>
+
+</ContentPage>

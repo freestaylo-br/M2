@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:M2.ViewModels"
+    x:Class="M2.Views.LoginPage">
+
+    <ContentPage.BindingContext>
+        <viewModels:LoginViewModel/>
+    </ContentPage.BindingContext>
+
+    <VerticalStackLayout
+        Padding="30"
+        Spacing="15"
+        VerticalOptions="Center">
+
+        <Image
+            Source="logo.jpg"
+            HeightRequest="90"
+            WidthRequest="90"
+            />
+
+        <Label
+            Text="Авторизация"
+            FontSize="24"
+            FontAttributes="Bold"
+            HorizontalOptions="Center"
+            />
+
+        <Entry
+            Placeholder="Логин"
+            Text="{Binding Login}"/>
+
+        <Entry
+            Placeholder="Пароль"
+            IsPassword="True"
+            Text="{Binding Password}"/>
+
+        <Button
+            Text="Войти"
+            FontAttributes="Bold"
+            BackgroundColor="#00FA9A"
+            TextColor="Black"
+            Clicked="LoginClicked"/>
+
+        <Button
+            Text="Войти как гость"
+            FontAttributes="Bold"
+            TextColor="Black"
+            BackgroundColor="#00FA9A"
+            Clicked="GuestClicked"/>
+
+    </VerticalStackLayout>
+
+</ContentPage>
