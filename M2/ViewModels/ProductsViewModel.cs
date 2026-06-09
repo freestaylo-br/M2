@@ -11,14 +11,32 @@ public class ProductsViewModel : INotifyPropertyChanged
     private readonly ApiService _api = new ApiService();
 
     private string userName = "";
-    private string searchText = "";
-    private bool isAscending = true;
+
+    private string searchStr = "";
+
+    private Supplier? selectedSupplier;
+
+    private bool sortAscending;
+
+    private bool sortDescending;
+
+
+    public string supplier_name;
+
+
+    
+    public bool CanSearch => CurrentUser.RoleId == 1 ||
+        CurrentUser.RoleId == 2;
 
     private ObservableCollection<Product> products = new();
 
     private List<Product> allProducts = new();
+    
+    public ObservableCollection<Supplier> Suppliers
+    { get; set; } = new();
 
-    public bool CanSort => CurrentUser.RoleId != 0;
+    public bool CanSort => CurrentUser.RoleId == 1 ||
+        CurrentUser.RoleId == 2;
 
     public bool IsAdmin => CurrentUser.RoleId == 1;
 
@@ -38,6 +56,50 @@ public class ProductsViewModel : INotifyPropertyChanged
         }
     }
 
+    public string SearchStr
+    {
+        get => searchStr;
+        set
+        {
+            searchStr = value;
+            OnPropertyChanged();
+
+            LoadProducts();
+        }
+    }
+
+    private async Task LoadSuppliers()
+    {
+        var suppliers = await _api.GetSuppliers();
+
+        Suppliers.Clear();
+
+        Suppliers.Add(new Supplier
+        {
+            SupplierId = 0,
+            supplier_name = "Все поставщики"
+        });
+
+        foreach (var supplier in suppliers)
+        {
+            Suppliers.Add(supplier);
+        }
+
+        SelectedSupplier = Suppliers[0];
+    }
+
+    public Supplier? SelectedSupplier
+    {
+        get => selectedSupplier;
+        set
+        {
+            selectedSupplier = value;
+            OnPropertyChanged();
+
+            LoadProducts();
+        }
+    }
+
     public ObservableCollection<Product> Products
     {
         get => products;
@@ -52,32 +114,74 @@ public class ProductsViewModel : INotifyPropertyChanged
     {
         UserName = CurrentUser.FullName;
 
+        _ = LoadSuppliers();
+
         LoadProducts();
     }
 
     private async void LoadProducts()
     {
-        var data = await _api.GetProducts();
+        var data = await _api.GetProducts(
+            SearchStr,
+            false,
+            SelectedSupplier?.SupplierId == 0
+                ? null
+                : SelectedSupplier?.SupplierId);
 
-        allProducts = data;
+        if (SortDescending)
+        {
+            data = data
+                .OrderByDescending(x => x.Count)
+                .ToList();
+        }
+        else
+        {
+            data = data
+                .OrderBy(x => x.Count)
+                .ToList();
+        }
 
         Products = new ObservableCollection<Product>(data);
     }
 
-    public void ToggleSort()
+    public bool SortAscending
     {
-        if (isAscending)
+        get => sortAscending;
+        set
         {
-            Products = new ObservableCollection<Product>(
-                Products.OrderBy(x => x.Count));
-        }
-        else
-        {
-            Products = new ObservableCollection<Product>(
-                Products.OrderByDescending(x => x.Count));
-        }
+            if (sortAscending == value)
+                return;
 
-        isAscending = !isAscending;
+            sortAscending = value;
+
+            if (value)
+                sortDescending = false;
+
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(SortDescending));
+
+            LoadProducts();
+        }
+    }
+
+    public bool SortDescending
+    {
+        get => sortDescending;
+        set
+        {
+            if (sortDescending == value)
+                return;
+
+            sortDescending = value;
+
+            if (value)
+                sortAscending = false;
+
+            OnPropertyChanged();
+            OnPropertyChanged(nameof(SortAscending));
+
+            LoadProducts();
+        }
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;

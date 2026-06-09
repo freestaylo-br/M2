@@ -14,6 +14,10 @@ namespace M2
             Routing.RegisterRoute(
                 nameof(ProductsPage),
                 typeof(ProductsPage));
+
+            Routing.RegisterRoute(
+                nameof(ProductEditPage),
+                typeof(ProductEditPage));
         }
     }
 }

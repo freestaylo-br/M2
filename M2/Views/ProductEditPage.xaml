@@ -1,0 +1,69 @@
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="M2.Views.ProductEditPage">
+
+    <ScrollView>
+
+        <VerticalStackLayout
+            Padding="15"
+            Spacing="10">
+
+            <Image
+                x:Name="ProductImage"
+                HeightRequest="200"
+                Aspect="AspectFit"
+                Source="picture.jpg"/>
+
+            <Button
+                Text="Выбрать фотографию"
+                Clicked="SelectPhoto_Clicked" />
+
+            <Button
+                Text="Назад"
+                Clicked="Back_Clicked"/>
+
+            <Entry
+                x:Name="ProductNameEntry"
+                Placeholder="Название товара" />
+
+            <Entry
+                x:Name="CategoryEntry"
+                Placeholder="Категория" />
+
+            <Entry
+                x:Name="ManufacturerEntry"
+                Placeholder="Производитель" />
+
+            <Entry
+                x:Name="SupplierEntry"
+                Placeholder="Поставщик" />
+
+            <Entry
+                x:Name="AmountEntry"
+                Placeholder="Цена"
+                Keyboard="Numeric" />
+
+            <Entry
+                x:Name="CountEntry"
+                Placeholder="Количество"
+                Keyboard="Numeric" />
+
+            <Entry
+                x:Name="DiscountEntry"
+                Placeholder="Скидка"
+                Keyboard="Numeric" />
+
+            <Editor
+                x:Name="DescriptionEditor"
+                Placeholder="Описание"
+                HeightRequest="120" />
+            <Button
+                Text="Сохранить"
+                Clicked="Save_Clicked" />
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</ContentPage>

@@ -21,32 +21,76 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
                 <Label
                     Text="Список товаров"
                     FontSize="24"
+                    FontAttributes="Bold"/>
+
+                <SearchBar
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Placeholder="Поиск товара..."
+                    Text="{Binding SearchStr}"
+                    IsVisible="{Binding CanSearch}"
+                    Margin="5"/>
+
+                <HorizontalStackLayout
+                    Grid.Column="1"
+                    Spacing="20"
+                    IsVisible="{Binding CanSort}">
+
+                    <RadioButton
+                        Content="По возрастанию"
+                        GroupName="SortGroup"
+                        IsChecked="{Binding SortAscending}" />
+
+                    <RadioButton
+                        Content="По убыванию"
+                        GroupName="SortGroup"
+                        IsChecked="{Binding SortDescending}" />
+
+                </HorizontalStackLayout>
+
+                <Button
+                    Grid.Column="4"
+                    Grid.Row="1"
+                    Margin="5"
+                    Text="Добавить товар"
+                    TextColor="Black"
                     FontAttributes="Bold"
-                    VerticalOptions="Center"/>
+                    IsVisible="{Binding IsAdmin}"
+                    BackgroundColor="#00FA9A"
+                    Clicked="AddProduct_Clicked"/>
 
                 <Label
-                    Grid.Column="1"
+                    Grid.Row="1"
+                    FontAttributes="Bold"
+                    FontSize="15"
                     Text="{Binding UserName}"
                     VerticalOptions="Center"
-                    Margin="0,0,15,0"/>
+                    Margin="5"/>
 
-                <Button
+                <Picker
+                    Grid.Row="1"
                     Grid.Column="2"
-                    Margin="5"
-                    Text="Сортировка по количеству"
-                    TextColor="Black"
-                    BackgroundColor="#00FA9A"
-                    FontAttributes="Bold"
-                    IsVisible="{Binding CanSort}"
-                    Clicked="SortClicked"/>
+                    ItemsSource="{Binding Suppliers}"
+                    SelectedItem="{Binding SelectedSupplier}"
+                    ItemDisplayBinding="{Binding supplier_name}"
+                    IsVisible="{Binding CanSearch}"
+                    Margin="5"/>
 
                 <Button
-                    Grid.Column="3"
+                    Grid.Row="1"
+                    Grid.Column="5"
                     Margin="5"
                     Text="Выход"
                     TextColor="BLACK"
@@ -55,7 +99,9 @@
                     Clicked="ExitClicked"/>
             </Grid>
 
-            <CollectionView ItemsSource="{Binding Products}">
+            <CollectionView ItemsSource="{Binding Products}"
+                            SelectionMode="Single"
+                            SelectionChanged="Products_SelectionChanged">
 
             <CollectionView.ItemTemplate>
 
@@ -158,22 +204,22 @@
                                     Text="{Binding Count,
                                     StringFormat='Количество: {0}'}"/>
 
-                                <HorizontalStackLayout>
+                                    <HorizontalStackLayout>
 
-                                    <Label Text="Цена:"/>
+                                        <Label Text="Цена:"/>
 
-                                    <Label
+                                        <Label
                                         Text="{Binding Amount,
                                         StringFormat=' {0:N2} ₽'}">
 
-                                        <Label.Triggers>
+                                            <Label.Triggers>
 
-                                            <DataTrigger
+                                                <DataTrigger
                                                 TargetType="Label"
                                                 Binding="{Binding HasDiscount}"
                                                 Value="True">
 
-                                                <Setter
+                                                    <Setter
                                                     Property="TextDecorations"
                                                     Value="Strikethrough"/>
                                                     <Setter
@@ -182,23 +228,19 @@
 
                                                 </DataTrigger>
 
-                                        </Label.Triggers>
+                                            </Label.Triggers>
 
-                                    </Label>
+                                        </Label>
 
-                                    <Label
+                                        <Label
                                         FontAttributes="Bold"
                                         Text="{Binding FinalPrice,
                                         StringFormat=' {0:N2} ₽'}"
                                         IsVisible="{Binding HasDiscount}"/>
 
-                                </HorizontalStackLayout>
+                                    </HorizontalStackLayout>
 
-                                <Label
-                                    Text="{Binding Article,
-                                    StringFormat='Артикул: {0}'}"/>
-
-                            </VerticalStackLayout>
+                                </VerticalStackLayout>
 
                             <!-- Скидка -->
 

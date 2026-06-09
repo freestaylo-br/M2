@@ -1,5 +1,6 @@
-﻿using System.Net.Http.Json;
-using M2.Models;
+﻿using M2.Models;
+using System.Net.Http;
+using System.Net.Http.Json;
 
 namespace M2.Services;
 
@@ -15,9 +16,31 @@ public class ApiService
             new Uri("http://localhost:5156/");
     }
 
-    public async Task<List<Product>> GetProducts()
+    public async Task<List<Product>> GetProducts(
+    string? searchTerm,
+    bool isSortDescending,
+    int? supplierId)
     {
-        return await _client.GetFromJsonAsync<List<Product>>("api/Products");
+        string url =
+            $"api/Products?searchTerm={searchTerm}" +
+            $"&isSortDescending={isSortDescending}";
+
+        if (supplierId.HasValue)
+        {
+            url += $"&supplierId={supplierId}";
+        }
+
+        return await _client
+            .GetFromJsonAsync<List<Product>>(url)
+            ?? new List<Product>();
+    }
+
+    public async Task<List<Supplier>> GetSuppliers()
+    {
+        return await _client
+            .GetFromJsonAsync<List<Supplier>>
+            ("api/Suppliers")
+            ?? new List<Supplier>();
     }
 
     public async Task<Staff?> Login(
@@ -40,5 +63,37 @@ public class ApiService
 
         return await response.Content
             .ReadFromJsonAsync<Staff>();
+    }
+
+    public async Task<bool> CreateProductAsync(
+    Product product,
+    FileResult? selectedImage)
+    {
+        var form = new MultipartFormDataContent();
+
+        var json =
+            System.Text.Json.JsonSerializer.Serialize(product);
+
+        form.Add(
+            new StringContent(json),
+            "productJson");
+
+        if (selectedImage != null)
+        {
+            var stream =
+                await selectedImage.OpenReadAsync();
+
+            form.Add(
+                new StreamContent(stream),
+                "image",
+                selectedImage.FileName);
+        }
+
+        var response =
+            await _client.PostAsync(
+                "api/Products",
+                form);
+
+        return response.IsSuccessStatusCode;
     }
 }
