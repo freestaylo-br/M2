@@ -1,30 +1,120 @@
 using Microsoft.Maui.Storage;
 using M2.Models;
-using M2.ViewModels;
 using M2.Services;
 
 namespace M2.Views;
 
 public partial class ProductEditPage : ContentPage
 {
-    private string photoName = "picture";
+    private readonly ApiService _api = new ApiService();
+
+private Product? currentProduct;
 
     private FileResult? selectedImage;
+
+    private List<Manufacturer> manufacturers = new();
+
+    private List<Supplier> suppliers = new();
+
+    private List<Category> categories = new();
+
+    private string photoName = "picture";
 
     public ProductEditPage()
     {
         InitializeComponent();
+
+        _ = LoadPickers();
+    }
+
+    public ProductEditPage(Product product)
+    {
+        InitializeComponent();
+
+        _ = LoadPickers();
+
+        currentProduct = product;
+
+        ProductNameEntry.Text =
+            product.ProductName;
+
+        DescriptionEditor.Text =
+            product.Description;
+
+        AmountEntry.Text =
+            product.Amount.ToString();
+
+        CountEntry.Text =
+            product.Count.ToString();
+
+        DiscountEntry.Text =
+            product.Discount.ToString();
+
+        if (!string.IsNullOrWhiteSpace(product.Photo))
+        {
+            ProductImage.Source =
+                $"http://localhost:5156/images/{product.Photo}";
+        }
+        else
+        {
+            ProductImage.Source = "picture.jpg";
+        }
+    }
+
+    private async Task LoadPickers()
+    {
+        manufacturers =
+            await _api.GetManufacturers();
+
+        ManufacturerPicker.ItemsSource =
+            manufacturers;
+
+        ManufacturerPicker.ItemDisplayBinding =
+            new Binding("ManufacturerName");
+
+        suppliers =
+            await _api.GetSuppliers();
+
+        SupplierPicker.ItemsSource =
+            suppliers;
+
+        SupplierPicker.ItemDisplayBinding =
+            new Binding("supplier_name");
+
+        categories = await _api.GetCategories();
+
+        CategoryPicker.ItemsSource = categories;
+
+        CategoryPicker.ItemDisplayBinding = new Binding("CategoryName");
+
+        if (currentProduct != null)
+        {
+            ManufacturerPicker.SelectedItem =
+                manufacturers.FirstOrDefault(
+                    x => x.ManufacturerName ==
+                         currentProduct.Manufacturer);
+
+            SupplierPicker.SelectedItem =
+                suppliers.FirstOrDefault(
+                    x => x.supplier_name ==
+                         currentProduct.Supplier);
+
+            CategoryPicker.SelectedItem = suppliers.FirstOrDefault(
+                x => x.supplier_name == currentProduct.Category);
+        }
     }
 
     private async void SelectPhoto_Clicked(
-     object sender,
-     EventArgs e)
+        object sender,
+        EventArgs e)
     {
-        var file = await FilePicker.Default.PickAsync(
-            new PickOptions
-            {
-                PickerTitle = "Выберите изображение"
-            });
+        var file =
+            await FilePicker.Default.PickAsync(
+                new PickOptions
+                {
+                    PickerTitle =
+                        "Выберите изображение"
+                });
 
         if (file == null)
             return;
@@ -32,42 +122,66 @@ public partial class ProductEditPage : ContentPage
         selectedImage = file;
 
         ProductImage.Source =
-            ImageSource.FromFile(file.FullPath);
+            ImageSource.FromFile(
+                file.FullPath);
     }
 
     private async void Save_Clicked(
-    object sender,
-    EventArgs e)
+        object sender,
+        EventArgs e)
     {
         try
         {
             var product = new Product
             {
+                ProductId =
+                    currentProduct?.ProductId ?? 0,
+
                 ProductName =
-                    ProductNameEntry.Text,
+                    ProductNameEntry.Text ?? "",
 
                 Description =
-                    DescriptionEditor.Text,
+                    DescriptionEditor.Text ?? "",
 
                 Amount =
                     decimal.Parse(
-                        AmountEntry.Text),
+                        AmountEntry.Text ?? "0"),
 
                 Count =
                     int.Parse(
-                        CountEntry.Text),
+                        CountEntry.Text ?? "0"),
 
                 Discount =
-                    int.Parse(
-                        DiscountEntry.Text),
+                    decimal.Parse(
+                        DiscountEntry.Text ?? "0"),
 
-                Photo = ""
+                Manufacturer =
+                    (ManufacturerPicker.SelectedItem
+                        as Manufacturer)
+                        ?.ManufacturerName ?? "",
+
+                Supplier =
+                    (SupplierPicker.SelectedItem
+                        as Supplier)
+                        ?.supplier_name ?? "",
+
+                Category = 
+                    (CategoryPicker.SelectedItem
+                        as Category)
+                        ?.CategoryName ?? "",
+
+                Measurement =
+                    currentProduct?.Measurement ?? "",
+
+                Article =
+                    currentProduct?.Article ?? "",
+
+                Photo =
+                    currentProduct?.Photo
             };
 
-            var api = new ApiService();
-
             var result =
-                await api.CreateProductAsync(
+                await _api.CreateProductAsync(
                     product,
                     selectedImage);
 
@@ -75,7 +189,7 @@ public partial class ProductEditPage : ContentPage
             {
                 await DisplayAlert(
                     "Успех",
-                    "Товар добавлен",
+                    "Товар сохранен",
                     "OK");
 
                 await Navigation.PopAsync();
@@ -98,43 +212,9 @@ public partial class ProductEditPage : ContentPage
     }
 
     private async void Back_Clicked(
-    object sender,
-    EventArgs e)
+        object sender,
+        EventArgs e)
     {
         await Navigation.PopAsync();
-    }
-
-    private Product currentProduct;
-
-    public ProductEditPage(Product product)
-    {
-        InitializeComponent();
-
-        currentProduct = product;
-
-        ProductNameEntry.Text =
-            product.ProductName;
-
-        DescriptionEditor.Text =
-            product.Description;
-
-        AmountEntry.Text =
-            product.Amount.ToString();
-
-        CountEntry.Text =
-            product.Count.ToString();
-
-        DiscountEntry.Text =
-            product.Discount.ToString();
-
-        if (!string.IsNullOrWhiteSpace(currentProduct.Photo))
-        {
-            ProductImage.Source =
-                $"http://localhost:5156/images/{currentProduct.Photo}";
-        }
-        else
-        {
-            ProductImage.Source = "picture.jpg";
-        }
     }
 }

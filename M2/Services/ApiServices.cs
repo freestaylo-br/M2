@@ -35,6 +35,14 @@ public class ApiService
             ?? new List<Product>();
     }
 
+    public async Task<List<Manufacturer>> GetManufacturers()
+    {
+        return await _client
+            .GetFromJsonAsync<List<Manufacturer>>
+            ("api/Manufacturer")
+            ?? new List<Manufacturer>();
+    }
+
     public async Task<List<Supplier>> GetSuppliers()
     {
         return await _client
@@ -65,6 +73,14 @@ public class ApiService
             .ReadFromJsonAsync<Staff>();
     }
 
+    public async Task<List<Category>> GetCategories()
+    {
+        return await _client
+            .GetFromJsonAsync<List<Category>>
+            ("api/Categories")
+            ?? new List<Category>();
+    }
+
     public async Task<bool> CreateProductAsync(
     Product product,
     FileResult? selectedImage)
@@ -90,10 +106,19 @@ public class ApiService
         }
 
         var response =
-            await _client.PostAsync(
-                "api/Products",
-                form);
+    await _client.PostAsync(
+        "api/Products",
+        form);
 
-        return response.IsSuccessStatusCode;
+        if (!response.IsSuccessStatusCode)
+        {
+            var error =
+                await response.Content.ReadAsStringAsync();
+
+            throw new Exception(
+                $"API ERROR: {response.StatusCode}\n{error}");
+        }
+
+        return true;
     }
 }

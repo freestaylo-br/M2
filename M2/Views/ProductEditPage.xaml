@@ -16,10 +16,16 @@
                 Source="picture.jpg"/>
 
             <Button
+                FontAttributes="Bold"
+                TextColor="Black"
+                BackgroundColor="#00FA9A"
                 Text="Выбрать фотографию"
                 Clicked="SelectPhoto_Clicked" />
 
             <Button
+                FontAttributes="Bold"
+                TextColor="Black"
+                BackgroundColor="#00FA9A"
                 Text="Назад"
                 Clicked="Back_Clicked"/>
 
@@ -27,17 +33,17 @@
                 x:Name="ProductNameEntry"
                 Placeholder="Название товара" />
 
-            <Entry
-                x:Name="CategoryEntry"
-                Placeholder="Категория" />
+            <Picker
+                x:Name="CategoryPicker"
+                Title="Категория"/>
 
-            <Entry
-                x:Name="ManufacturerEntry"
-                Placeholder="Производитель" />
+            <Picker
+                x:Name="ManufacturerPicker"
+                Title="Производитель"/>
 
-            <Entry
-                x:Name="SupplierEntry"
-                Placeholder="Поставщик" />
+            <Picker
+                x:Name="SupplierPicker"
+                Title="Поставщик"/>
 
             <Entry
                 x:Name="AmountEntry"
@@ -58,7 +64,11 @@
                 x:Name="DescriptionEditor"
                 Placeholder="Описание"
                 HeightRequest="120" />
+            
             <Button
+                FontAttributes="Bold"
+                TextColor="Black"
+                BackgroundColor="#00FA9A"
                 Text="Сохранить"
                 Clicked="Save_Clicked" />
 
