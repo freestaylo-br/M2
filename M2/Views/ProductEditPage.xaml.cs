@@ -8,7 +8,7 @@ public partial class ProductEditPage : ContentPage
 {
     private readonly ApiService _api = new ApiService();
 
-private Product? currentProduct;
+    private Product? currentProduct;
 
     private FileResult? selectedImage;
 
@@ -18,11 +18,19 @@ private Product? currentProduct;
 
     private List<Category> categories = new();
 
+    private List<ProductName> productNames = new();
+
+    private bool isEditMode = false;
+
     private string photoName = "picture";
 
     public ProductEditPage()
     {
         InitializeComponent();
+
+        PageTitleLabel.Text = "Добавление товара";
+
+        DeleteButton.IsVisible = false;
 
         _ = LoadPickers();
     }
@@ -31,24 +39,27 @@ private Product? currentProduct;
     {
         InitializeComponent();
 
-        _ = LoadPickers();
+        PageTitleLabel.Text = "Редактирование товара";
 
         currentProduct = product;
 
-        ProductNameEntry.Text =
-            product.ProductName;
+        isEditMode = true;
 
-        DescriptionEditor.Text =
-            product.Description;
+        DeleteButton.IsVisible = true;
 
-        AmountEntry.Text =
-            product.Amount.ToString();
+        _ = LoadPickers();
 
-        CountEntry.Text =
-            product.Count.ToString();
+        DescriptionEditor.Text 
+            = product.Description;
 
-        DiscountEntry.Text =
-            product.Discount.ToString();
+        AmountEntry.Text 
+            = product.Amount.ToString();
+
+        CountEntry.Text 
+            = product.Count.ToString();
+
+        DiscountEntry.Text 
+            = product.Discount.ToString();
 
         if (!string.IsNullOrWhiteSpace(product.Photo))
         {
@@ -81,11 +92,21 @@ private Product? currentProduct;
         SupplierPicker.ItemDisplayBinding =
             new Binding("supplier_name");
 
-        categories = await _api.GetCategories();
+        categories = 
+            await _api.GetCategories();
 
         CategoryPicker.ItemsSource = categories;
 
-        CategoryPicker.ItemDisplayBinding = new Binding("CategoryName");
+        CategoryPicker.ItemDisplayBinding = 
+            new Binding("CategoryName");
+
+        productNames = 
+            await _api.GetProductNames();
+
+        ProductNamePicker.ItemsSource = productNames;
+
+        ProductNamePicker.ItemDisplayBinding = 
+            new Binding("Name");
 
         if (currentProduct != null)
         {
@@ -99,8 +120,12 @@ private Product? currentProduct;
                     x => x.supplier_name ==
                          currentProduct.Supplier);
 
-            CategoryPicker.SelectedItem = suppliers.FirstOrDefault(
-                x => x.supplier_name == currentProduct.Category);
+            CategoryPicker.SelectedItem = categories.FirstOrDefault(
+                x => x.CategoryName == currentProduct.Category);
+
+            ProductNamePicker.SelectedItem =
+                productNames.FirstOrDefault(x =>
+                x.ProductNameId == currentProduct.ProductNameId);
         }
     }
 
@@ -132,13 +157,26 @@ private Product? currentProduct;
     {
         try
         {
+            var selectedProductName = ProductNamePicker.SelectedItem
+                as ProductName;
+
+            if (selectedProductName == null)
+            {
+                await DisplayAlert(
+                    "Ошибка",
+                    "Выберите название товара",
+                    "Ок");
+                return;
+            }
+
             var product = new Product
             {
                 ProductId =
                     currentProduct?.ProductId ?? 0,
 
-                ProductName =
-                    ProductNameEntry.Text ?? "",
+                ProductNameId = selectedProductName.ProductNameId,
+
+                ProductName = selectedProductName.Name,
 
                 Description =
                     DescriptionEditor.Text ?? "",
@@ -170,8 +208,7 @@ private Product? currentProduct;
                         as Category)
                         ?.CategoryName ?? "",
 
-                Measurement =
-                    currentProduct?.Measurement ?? "",
+                Measurement = "шт. ",
 
                 Article =
                     currentProduct?.Article ?? "",
@@ -180,26 +217,42 @@ private Product? currentProduct;
                     currentProduct?.Photo
             };
 
-            var result =
-                await _api.CreateProductAsync(
-                    product,
-                    selectedImage);
+            bool result;
+
+            if (isEditMode)
+            {
+                result =
+                    await _api.UpdateProductAsync(
+                        product,
+                        selectedImage);
+            }
+            else
+            {
+                result =
+                    await _api.CreateProductAsync(
+                        product,
+                        selectedImage);
+            }
 
             if (result)
             {
                 await DisplayAlert(
-                    "Успех",
-                    "Товар сохранен",
-                    "OK");
+                    "Успешно",
+                    isEditMode
+                    ? "Товар изменен"
+                    : "Товар добавлен",
+                    "Ок");
 
                 await Navigation.PopAsync();
+
+                OnAppearing();
             }
             else
             {
                 await DisplayAlert(
                     "Ошибка",
                     "Не удалось сохранить товар",
-                    "OK");
+                    "Ок");
             }
         }
         catch (Exception ex)
@@ -211,10 +264,53 @@ private Product? currentProduct;
         }
     }
 
+    private async void Delete_Clicked(
+    object sender,
+    EventArgs e)
+    {
+        if (currentProduct == null)
+            return;
+
+        bool confirm =
+            await DisplayAlert(
+                "Удаление",
+                "Удалить товар?",
+                "Да",
+                "Нет");
+
+        if (!confirm)
+            return;
+
+        var error =
+            await _api.DeleteProductAsync(
+                currentProduct.ProductId);
+
+        if (error == null)
+        {
+            await DisplayAlert(
+                "Успех",
+                "Товар удалён",
+                "OK");
+
+            await Navigation.PopAsync();
+
+            OnAppearing();
+        }
+        else
+        {
+            await DisplayAlert(
+                "Удаление запрещено",
+                error,
+                "OK");
+        }
+    }
+
     private async void Back_Clicked(
         object sender,
         EventArgs e)
     {
         await Navigation.PopAsync();
+
+        OnAppearing();
     }
 }

@@ -67,7 +67,7 @@
                     Text="Добавить товар"
                     TextColor="Black"
                     FontAttributes="Bold"
-                    IsVisible="{Binding IsAdmin}"
+                    x:Name="AddButton"
                     BackgroundColor="#00FA9A"
                     Clicked="AddProduct_Clicked"/>
 

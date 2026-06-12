@@ -9,6 +9,14 @@
             Padding="15"
             Spacing="10">
 
+            <Label
+                x:Name="PageTitleLabel"
+                Text="Добавление товара"
+                FontSize="24"
+                FontAttributes="Bold"
+                HorizontalOptions="Center"
+                Margin="5"/>
+
             <Image
                 x:Name="ProductImage"
                 HeightRequest="200"
@@ -29,9 +37,9 @@
                 Text="Назад"
                 Clicked="Back_Clicked"/>
 
-            <Entry
-                x:Name="ProductNameEntry"
-                Placeholder="Название товара" />
+            <Picker
+                x:Name="ProductNamePicker"
+                Title="Название товара"/>
 
             <Picker
                 x:Name="CategoryPicker"
@@ -71,6 +79,14 @@
                 BackgroundColor="#00FA9A"
                 Text="Сохранить"
                 Clicked="Save_Clicked" />
+
+            <Button
+                x:Name="DeleteButton"
+                Text="Удалить"
+                BackgroundColor="#00FA9A"
+                TextColor="Black"
+                FontAttributes="Bold"
+                Clicked="Delete_Clicked"/>
 
         </VerticalStackLayout>
 

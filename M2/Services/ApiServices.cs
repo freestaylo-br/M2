@@ -1,6 +1,7 @@
 ﻿using M2.Models;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace M2.Services;
 
@@ -33,6 +34,14 @@ public class ApiService
         return await _client
             .GetFromJsonAsync<List<Product>>(url)
             ?? new List<Product>();
+    }
+
+    public async Task<List<ProductName>> GetProductNames()
+    {
+        return await _client
+            .GetFromJsonAsync<List<ProductName>>
+            ("api/ProductNames")
+            ?? new List<ProductName>();
     }
 
     public async Task<List<Manufacturer>> GetManufacturers()
@@ -81,6 +90,39 @@ public class ApiService
             ?? new List<Category>();
     }
 
+    public async Task<bool> UpdateProductAsync(
+    Product product,
+    FileResult? image)
+    {
+        var form =
+            new MultipartFormDataContent();
+
+        var json =
+            JsonSerializer.Serialize(product);
+
+        form.Add(
+            new StringContent(json),
+            "productJson");
+
+        if (image != null)
+        {
+            var stream =
+                await image.OpenReadAsync();
+
+            form.Add(
+                new StreamContent(stream),
+                "image",
+                image.FileName);
+        }
+
+        var response =
+            await _client.PutAsync(
+                $"api/Products/{product.ProductId}",
+                form);
+
+        return response.IsSuccessStatusCode;
+    }
+
     public async Task<bool> CreateProductAsync(
     Product product,
     FileResult? selectedImage)
@@ -120,5 +162,19 @@ public class ApiService
         }
 
         return true;
+    }
+
+    public async Task<string?> DeleteProductAsync(
+    int id)
+    {
+        var response =
+            await _client.DeleteAsync(
+                $"api/Products/{id}");
+
+        if (response.IsSuccessStatusCode)
+            return null;
+
+        return await response.Content
+            .ReadAsStringAsync();
     }
 }

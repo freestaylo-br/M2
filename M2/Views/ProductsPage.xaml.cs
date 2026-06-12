@@ -2,6 +2,7 @@ using M2.ViewModels;
 using M2.Views;
 using M2.Models;
 using M2.Services;
+using System.Threading.Tasks;
 
 namespace M2.Views;
 
@@ -11,7 +12,22 @@ public partial class ProductsPage : ContentPage
     {
         InitializeComponent();
 
+        if (CurrentUser.RoleId != 1)
+        {
+            AddButton.IsVisible = false;
+        }
+
         BindingContext = new ProductsViewModel();
+    }
+
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+
+        if (BindingContext is ProductsViewModel viewModel)
+        {
+            await viewModel.LoadProducts();
+        }
     }
 
     private async void ExitClicked(
@@ -19,6 +35,7 @@ public partial class ProductsPage : ContentPage
         EventArgs e)
     {
         await Navigation.PopToRootAsync();
+
     }
 
     private async void AddProduct_Clicked(
@@ -36,8 +53,7 @@ public partial class ProductsPage : ContentPage
         if (e.CurrentSelection.Count == 0)
             return;
 
-        if (CurrentUser.RoleId != 1 &&
-            CurrentUser.RoleId != 2)
+        if (CurrentUser.RoleId != 1)
         {
             ((CollectionView)sender).SelectedItem = null;
             return;

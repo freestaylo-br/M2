@@ -1,6 +1,7 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using M2.Models;
 using M2.Services;
 
@@ -119,7 +120,7 @@ public class ProductsViewModel : INotifyPropertyChanged
         LoadProducts();
     }
 
-    private async void LoadProducts()
+    public async Task LoadProducts()
     {
         var data = await _api.GetProducts(
             SearchStr,
