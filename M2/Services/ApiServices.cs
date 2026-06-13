@@ -17,6 +17,14 @@ public class ApiService
             new Uri("http://localhost:5156/");
     }
 
+    public async Task<List<Order>> GetOrders()
+    {
+        return await _client
+            .GetFromJsonAsync<List<Order>>(
+                "api/Orders")
+            ?? new List<Order>();
+    }
+
     public async Task<List<Product>> GetProducts(
     string? searchTerm,
     bool isSortDescending,
