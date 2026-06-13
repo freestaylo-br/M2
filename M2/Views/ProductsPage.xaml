@@ -51,7 +51,7 @@
                     <RadioButton
                         Content="По возрастанию"
                         GroupName="SortGroup"
-                        IsChecked="{Binding SortAscending}" />
+                        IsChecked="{Binding SortAscending, Converter={StaticResource IverseBoolConverter}}" />
 
                     <RadioButton
                         Content="По убыванию"

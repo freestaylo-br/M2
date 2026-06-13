@@ -17,10 +17,7 @@ public class ProductsViewModel : INotifyPropertyChanged
 
     private Supplier? selectedSupplier;
 
-    private bool sortAscending;
-
     private bool sortDescending;
-
 
     public string supplier_name;
 
@@ -120,69 +117,31 @@ public class ProductsViewModel : INotifyPropertyChanged
         LoadProducts();
     }
 
-    public async Task LoadProducts()
-    {
-        var data = await _api.GetProducts(
-            SearchStr,
-            false,
-            SelectedSupplier?.SupplierId == 0
-                ? null
-                : SelectedSupplier?.SupplierId);
-
-        if (SortDescending)
-        {
-            data = data
-                .OrderByDescending(x => x.Count)
-                .ToList();
-        }
-        else
-        {
-            data = data
-                .OrderBy(x => x.Count)
-                .ToList();
-        }
-
-        Products = new ObservableCollection<Product>(data);
-    }
-
-    public bool SortAscending
-    {
-        get => sortAscending;
-        set
-        {
-            if (sortAscending == value)
-                return;
-
-            sortAscending = value;
-
-            if (value)
-                sortDescending = false;
-
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(SortDescending));
-
-            LoadProducts();
-        }
-    }
-
     public bool SortDescending
     {
         get => sortDescending;
         set
         {
-            if (sortDescending == value)
-                return;
+            if (sortDescending == value) return;
 
             sortDescending = value;
 
-            if (value)
-                sortAscending = false;
-
             OnPropertyChanged();
-            OnPropertyChanged(nameof(SortAscending));
 
-            LoadProducts();
+            _ = LoadProducts();
         }
+    }
+
+    public async Task LoadProducts()
+    {
+        var data = await _api.GetProducts(
+            SearchStr,
+            SortDescending,
+            SelectedSupplier?.SupplierId == 0
+                ? null
+                : SelectedSupplier?.SupplierId);
+
+        Products = new ObservableCollection<Product>(data);
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
