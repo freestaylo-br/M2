@@ -71,6 +71,17 @@
                     BackgroundColor="#00FA9A"
                     Clicked="AddProduct_Clicked"/>
 
+                <Button
+                    Grid.Column="3"
+                    Grid.Row="1"
+                    Margin="5"
+                    Text="Заказы"
+                    TextColor="Black"
+                    FontAttributes="Bold"
+                    BackgroundColor="#00FA9A"
+                    IsVisible="{Binding CanSearch}"
+                    Clicked="Orders_Clicked"/>
+
                 <Label
                     Grid.Row="1"
                     FontAttributes="Bold"

@@ -24,6 +24,15 @@ public class OrdersViewModel : INotifyPropertyChanged
         }
     }
 
+    public bool IsAdmin =>
+        CurrentUser.RoleId == 1;
+
+    public bool IsManager =>
+        CurrentUser.RoleId == 2;
+
+    public bool IsClient =>
+        CurrentUser.RoleId == 3;
+
     public OrdersViewModel()
     {
         _ = LoadOrders();
@@ -42,8 +51,9 @@ public class OrdersViewModel : INotifyPropertyChanged
     public event PropertyChangedEventHandler?
         PropertyChanged;
 
-    protected void OnPropertyChanged(
-        [CallerMemberName] string? propertyName = null)
+    private void OnPropertyChanged(
+        [CallerMemberName]
+        string propertyName = "")
     {
         PropertyChanged?.Invoke(
             this,

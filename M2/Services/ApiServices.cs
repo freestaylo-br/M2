@@ -17,12 +17,85 @@ public class ApiService
             new Uri("http://localhost:5156/");
     }
 
+    public async Task<bool> CreateOrderAsync(Order order)
+    {
+        var response =
+            await _client.PostAsJsonAsync(
+                "api/Orders",
+                order);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error =
+                await response.Content.ReadAsStringAsync();
+
+            throw new Exception(error);
+        }
+
+        return true;
+    }
+
+    public async Task<bool> UpdateOrderAsync(Order order)
+    {
+        var response =
+            await _client.PutAsJsonAsync(
+                $"api/Orders/{order.OrderId}",
+                order);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error =
+                await response.Content.ReadAsStringAsync();
+
+            throw new Exception(error);
+        }
+
+        return true;
+    }
+
+    public async Task<bool> DeleteOrderAsync(
+    int orderId)
+    {
+        var response =
+            await _client.DeleteAsync(
+                $"api/Orders/{orderId}");
+
+        return response.IsSuccessStatusCode;
+    }
+
     public async Task<List<Order>> GetOrders()
     {
         return await _client
             .GetFromJsonAsync<List<Order>>(
                 "api/Orders")
             ?? new List<Order>();
+    }
+
+    public async Task<List<Status>> GetStatuses()
+    {
+        return await _client
+            .GetFromJsonAsync<List<Status>>(
+                "api/Statuses")
+            ?? new List<Status>();
+    }
+
+    public async Task<List<Product>>
+    GetProductsForOrder()
+    {
+        return await _client
+            .GetFromJsonAsync<List<Product>>(
+                "api/Products")
+            ?? new List<Product>();
+    }
+
+    public async Task<List<PickupLocation>>
+    GetPickupLocations()
+    {
+        return await _client
+            .GetFromJsonAsync<
+                List<PickupLocation>>(
+                "api/PickupLocations")
+            ?? new List<PickupLocation>();
     }
 
     public async Task<List<Product>> GetProducts(

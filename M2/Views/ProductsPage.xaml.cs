@@ -38,6 +38,14 @@ public partial class ProductsPage : ContentPage
 
     }
 
+    private async void Orders_Clicked(
+    object sender,
+    EventArgs e)
+    {
+        await Navigation.PushAsync(
+            new OrdersPage());
+    }
+
     private async void AddProduct_Clicked(
     object sender,
     EventArgs e)

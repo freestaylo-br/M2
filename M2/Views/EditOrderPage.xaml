@@ -1,12 +1,73 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="M2.Views.EditOrderPage"
-             Title="EditOrderPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="M2.Views.EditOrderPage">
+
+    <ScrollView>
+
+        <VerticalStackLayout Padding="10">
+
+            <Grid
+            ColumnDefinitions="Auto,*">
+
+            <Button
+                Margin="5"
+                BackgroundColor="#00FA9A"
+                TextColor="Black"
+                FontAttributes="Bold"
+                Grid.Column="0"
+                Text="Назад"
+                Clicked="Back_Clicked"/>
+
+            <Label
+                x:Name="TitleLabel"
+                Grid.Column="1"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                FontSize="24"
+                FontAttributes="Bold"/>
+
+            </Grid>
+
+            <Picker
+            x:Name="ProductPicker"
+            Title="Товар"/>
+
+            <Picker
+            x:Name="StatusPicker"
+            Title="Статус"/>
+
+            <Picker
+            x:Name="LocationPicker"
+            Title="Пункт выдачи"/>
+
+            <DatePicker
+            x:Name="OrderDatePicker"/>
+
+            <DatePicker
+            x:Name="DeliveryDatePicker"/>
+
+            <Button
+            BackgroundColor="#00FA9A"
+            Margin="5"
+            TextColor="Black"
+            FontAttributes="Bold"
+            Text="Сохранить"
+            Clicked="Save_Clicked"/>
+
+            <Button
+                Margin="5"
+            x:Name="DeleteButton"
+            Text="Удалить"
+            BackgroundColor="#00FA9A"
+            TextColor="Black"
+            FontAttributes="Bold"
+            Clicked="Delete_Clicked"/>
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
 </ContentPage>

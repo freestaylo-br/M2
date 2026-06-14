@@ -1,53 +1,104 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:viewModels="clr-namespace:M2.ViewModels"
     x:Class="M2.Views.OrdersPage">
 
-    <CollectionView
-        ItemsSource="{Binding Orders}"
-        x:Name="OrdersCollection">
+    <ContentPage.BindingContext>
+        <viewModels:OrdersViewModel/>
+    </ContentPage.BindingContext>
 
-        <CollectionView.ItemTemplate>
+    <Grid RowDefinitions="Auto,*">
 
-            <DataTemplate>
+        <!-- Верхняя панель -->
 
-                <Frame Margin="5">
+        <VerticalStackLayout
+            Grid.Row="0"
+            Padding="10">
 
-                    <Grid ColumnDefinitions="*,Auto">
+            <Label
+                Text="Список заказов"
+                FontSize="24"
+                FontAttributes="Bold"/>
 
-                        <VerticalStackLayout>
+            <HorizontalStackLayout
+                Margin="0,10,0,10"
+                Spacing="10">
 
-                            <Label
-                                Text="{Binding Article}"
-                                FontAttributes="Bold"/>
+                <Button
+                    BackgroundColor="#00FA9A"
+                    TextColor="Black"
+                    FontAttributes="Bold"
+                    Text="Добавить заказ"
+                    IsVisible="{Binding IsAdmin}"
+                    Clicked="AddOrder_Clicked"/>
 
-                            <Label
-                                Text="{Binding StatusName}"/>
+                <Button
+                    BackgroundColor="#00FA9A"
+                    TextColor="Black"
+                    FontAttributes="Bold"
+                    Text="Назад"
+                    Clicked="Back_Clicked"/>
 
-                            <Label
-                                Text="{Binding PickupLocation}"/>
+            </HorizontalStackLayout>
 
-                        </VerticalStackLayout>
+        </VerticalStackLayout>
 
-                        <VerticalStackLayout
-                            Grid.Column="1">
+        <!-- Список -->
 
-                            <Label
-                                Text="{Binding OrderDate}"/>
+        <CollectionView
+            Grid.Row="1"
+            x:Name="OrdersCollection"
+            ItemsSource="{Binding Orders}"
+            SelectionMode="Single"
+            SelectionChanged="Orders_SelectionChanged">
 
-                            <Label
-                                Text="{Binding DeliveryDate}"/>
+            <CollectionView.ItemTemplate>
 
-                        </VerticalStackLayout>
+                <DataTemplate>
 
-                    </Grid>
+                    <Border
+                        Margin="5"
+                        Padding="10"
+                        Stroke="Black"
+                        StrokeThickness="1">
 
-                </Frame>
+                        <Grid ColumnDefinitions="*,Auto">
 
-            </DataTemplate>
+                            <VerticalStackLayout>
 
-        </CollectionView.ItemTemplate>
+                                <Label
+                                    FontAttributes="Bold"
+                                    Text="{Binding Article}"/>
 
-    </CollectionView>
+                                <Label
+                                    Text="{Binding StatusName}"/>
+
+                                <Label
+                                    Text="{Binding PickupLocation}"/>
+
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Grid.Column="1">
+
+                                <Label
+                                    Text="{Binding OrderDate}"/>
+
+                                <Label
+                                    Text="{Binding DeliveryDate}"/>
+
+                            </VerticalStackLayout>
+
+                        </Grid>
+
+                    </Border>
+
+                </DataTemplate>
+
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+    </Grid>
 
 </ContentPage>
