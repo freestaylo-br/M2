@@ -10,7 +10,7 @@
         <VerticalStackLayout Padding="10">
 
             <Grid
-            ColumnDefinitions="Auto,*">
+                ColumnDefinitions="Auto,*">
 
             <Button
                 Margin="5"
@@ -32,39 +32,39 @@
             </Grid>
 
             <Picker
-            x:Name="ProductPicker"
-            Title="Товар"/>
+                x:Name="ProductPicker"
+                Title="Товар"/>
 
             <Picker
-            x:Name="StatusPicker"
-            Title="Статус"/>
+                x:Name="StatusPicker"
+                Title="Статус"/>
 
             <Picker
-            x:Name="LocationPicker"
-            Title="Пункт выдачи"/>
+                x:Name="LocationPicker"
+                Title="Пункт выдачи"/>
 
             <DatePicker
-            x:Name="OrderDatePicker"/>
+                x:Name="OrderDatePicker"/>
 
             <DatePicker
-            x:Name="DeliveryDatePicker"/>
+                x:Name="DeliveryDatePicker"/>
 
             <Button
-            BackgroundColor="#00FA9A"
-            Margin="5"
-            TextColor="Black"
-            FontAttributes="Bold"
-            Text="Сохранить"
-            Clicked="Save_Clicked"/>
+                BackgroundColor="#00FA9A"
+                Margin="5"
+                TextColor="Black"
+                FontAttributes="Bold"
+                Text="Сохранить"
+                Clicked="Save_Clicked"/>
 
             <Button
                 Margin="5"
-            x:Name="DeleteButton"
-            Text="Удалить"
-            BackgroundColor="#00FA9A"
-            TextColor="Black"
-            FontAttributes="Bold"
-            Clicked="Delete_Clicked"/>
+                x:Name="DeleteButton"
+                Text="Удалить"
+                BackgroundColor="#00FA9A"
+                TextColor="Black"
+                FontAttributes="Bold"
+                Clicked="Delete_Clicked"/>
 
         </VerticalStackLayout>
 

@@ -69,23 +69,25 @@
 
                                 <Label
                                     FontAttributes="Bold"
-                                    Text="{Binding Article}"/>
+                                    Text="{Binding Article, StringFormat='Артикул: {0}'}"/>
 
                                 <Label
-                                    Text="{Binding StatusName}"/>
+                                    Text="{Binding StatusName, StringFormat='Статус: {0}'}"/>
 
                                 <Label
-                                    Text="{Binding PickupLocation}"/>
+                                    Text="{Binding PickupLocation, StringFormat='ПВЗ: {0}'}"/>
+
+                                <Label
+                                Text="{Binding OrderDate, StringFormat='Дата заказа: {0:dd.MM.yyyy}'}"/>
 
                             </VerticalStackLayout>
 
                             <VerticalStackLayout Grid.Column="1">
 
                                 <Label
-                                    Text="{Binding OrderDate}"/>
-
-                                <Label
-                                    Text="{Binding DeliveryDate}"/>
+                                    Text="{Binding DeliveryDate,
+                                    StringFormat='Дата доставки: {0:dd.MM.yyyy}'}"
+                                    FontAttributes="Bold"/>
 
                             </VerticalStackLayout>
 
